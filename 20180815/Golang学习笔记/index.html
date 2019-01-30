@@ -1,0 +1,288 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Golang学习笔记 | 付啸的个人网站</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.3.1/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Golang学习笔记</h1><a id="logo" href="/.">付啸的个人网站</a><p class="description">var me = 程序员 &amp;&amp; 吃货</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Golang学习笔记</h1><div class="post-meta">Aug 15, 2018</div><div class="post-content"><h1 id="Golang学习笔记"><a href="#Golang学习笔记" class="headerlink" title="Golang学习笔记"></a>Golang学习笔记</h1><h2 id="变量-类型和关键字"><a href="#变量-类型和关键字" class="headerlink" title="变量, 类型和关键字"></a>变量, 类型和关键字</h2><h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><p>var 声明创建一个具体类型的变量 <code>var name type = expression</code></p>
+<ul>
+<li>type指变量类型</li>
+<li>expression指表达式</li>
+</ul>
+<p>两者可以省略一个, 但不能同时省略. 当类型省略时, 类型由初始化表达式决定. 如果表达式省略, 其初始值对应类型的零值. (对于数字是0, 对于布尔值是false, 对于字符串是””, 对于接口和引用类型(slice, 指针, map, channel, 函数)其零值是nil)</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ul>
+<li>在Go语言中, 变量的声明与赋值是两个过程, <code>:=</code> 符号可以一步完成声明及赋值两步, 这一形式只能用在函数中. 这种情况下, 变量的类型由值推演出来的. </li>
+<li>var, const, import 可以使用 <code>()</code> 声明一组变量.</li>
+<li>特殊变量名: <code>_</code>(下划线), 任何赋值给它的值都会被丢弃掉.</li>
+<li>Go的编译器会对: <strong>声明后却未使用的变量</strong>编译时报错.</li>
+<li>布尔类型: bool, 值为预定义常量, <code>true</code> 和 <code>false</code></li>
+<li><p>数字类型: int, 此类型根据平台硬件决定其长度. 32位硬件长度为<code>32</code>, 64位的硬件长度为<code>64</code>. 如果希望明确长度, 可以使用 <code>int32</code>, <code>int64</code>. </p>
+<ul>
+<li><p>完整的整数类型列表</p>
+<ul>
+<li>符号: int8, int16, int32, int64</li>
+<li>无符号: byte, uint8, uint16, uint32, uint64</li>
+</ul>
+</li>
+<li><p>浮点类型: float32, float64</p>
+</li>
+</ul>
+</li>
+<li><p>常量: 使用<code>const</code>关键字声明.</p>
+<ul>
+<li>关键字<code>iota</code>, 生成枚举值, 在 <code>()</code> 组内声明变量时, 第一个值使用 <code>iota</code>, 其余值一次累加1, 且可省略掉<code>iota</code>. 在组外<code>()</code>使用iota, 每次都会初始化新值为0</li>
+</ul>
+</li>
+<li><p>字符串: <code>string</code></p>
+<ul>
+<li>使用<code>&quot;</code>包裹</li>
+<li><code>&#39;</code> 单引号表示字符, 非字符串.</li>
+<li>多行字符串可以使用 <code>&quot;&quot; + &quot;&quot;</code> 拼接, 注意 <code>+</code> 符号必须在第一行的结尾处, 还可以使用<code>\</code>``符号标示多行字符.</li>
+</ul>
+</li>
+<li><p>错误类型: <code>error</code></p>
+<p>  错误类型是一个接口.</p>
+</li>
+</ul>
+<h2 id="控制结构"><a href="#控制结构" class="headerlink" title="控制结构"></a>控制结构</h2><p>go只有很少的几个控制结构: <code>if</code>, <code>for</code>, <code>switch</code>, <code>select</code>(类型选择和多路通讯转换器). </p>
+<p>控制语句与c有些不同, 不需要圆括号(), 且语句体必须包含在大括号内{}.</p>
+<ul>
+<li><code>if</code>, <code>switch</code>: 接受初始化语句, 通常用于设置一个(局部)变量.</li>
+<li>用于结束控制语句的关键字: <code>break</code>, <code>continue</code>, <code>return</code>, <code>goto</code></li>
+</ul>
+<blockquote>
+<p>平行赋值: a, b = b, a</p>
+</blockquote>
+<ul>
+<li><code>break</code>: 终止离它最近的循环</li>
+<li><code>continue</code>: 进入离他最近的下一次循环</li>
+<li>关键字: <code>range</code>, 是一个迭代器, 可以用在对象为: <code>slice</code>, <code>array</code>, <code>string</code>, <code>map</code>, <code>channel</code>. 针对不同类型的对象, 返回的k, v值是不一样的.</li>
+<li><p><code>switch</code>: 表达式不必为常量或整数, 可以是true的表达式, 执行过程, 自上向下, 直到找到匹配项, 如果没有匹配项, 可以匹配结果为true的表达式. </p>
+<ul>
+<li><code>fallthrough</code>: 可以穿透 case项, 匹配下一项</li>
+<li><code>default</code>: 可以匹配当所有case项都不匹配的情况.</li>
+<li><code>case</code>后面, 可以使用逗号<code>,</code>分割多个表达式, 形成case列表.</li>
+</ul>
+</li>
+</ul>
+<h2 id="内建函数"><a href="#内建函数" class="headerlink" title="内建函数"></a>内建函数</h2><p>go语言內建了少数函数, 这意味着无需引用任何包就可以使用.</p>
+<p><img src="media/15321541124095/15062610979454.jpg" alt="w500"></p>
+<ul>
+<li><code>close</code>: 用于channel通信, 使用close关闭channel.</li>
+<li><code>delete</code>: 用于删除map中的实例</li>
+<li><code>len</code>和<code>cap</code>: 用于不同类型的长度值, <code>len</code>用于字符串, slice和数组的长度. </li>
+<li><code>new</code> 用于各种类型的内存分配</li>
+<li><code>make</code> 用于内建类型(map, slice, channel)的内存分配.</li>
+<li><code>copy</code> 用于复制slice</li>
+<li><code>append</code> 用于追加 slice</li>
+<li><code>panic</code> 和 <code>recover</code> 用于异常处理机制.</li>
+<li><code>print</code> 和 <code>println</code> 可以再不导入<code>fmt</code>包的情况下打印, 主要用于调试.</li>
+<li><code>complex</code>, <code>real</code>, <code>imag</code>: 用于处理复数</li>
+</ul>
+<h2 id="array-slice-map"><a href="#array-slice-map" class="headerlink" title="array, slice, map"></a>array, slice, map</h2><h4 id="array"><a href="#array" class="headerlink" title="array"></a>array</h4><ul>
+<li>数组是具有固定长度且拥有零个或多个相同数据类型元素的序列。</li>
+<li>默认情况下，一个数组中的元素初始值为元素类型的零值。也可以使用<em>数组字面量</em>根据一组值来初始化一个数组。</li>
+<li>在数组字面量中，如果省略号<code>...</code>出现在数组长度的位置，那么数组的长度由初始化数组的元素长度个数决定。</li>
+<li>语法定义: [n]<type>, n: 表示长度, type: 表示希望存储的类型.</type></li>
+<li>数组是值类型, 将一个数组赋值给另一个数组, 会复制所有的元素. 如函数的传递变量, 它会获取一个数组的副本, 而不是数组的指针.</li>
+<li>数组的长度不能改变</li>
+<li>字面量初始化数组: <code>a := [3]int{1, 2, 3}</code> 或 <code>a = [...]int{1, 2, 3}</code></li>
+<li>数组比较直接使用 <code>==</code></li>
+</ul>
+<h4 id="slice"><a href="#slice" class="headerlink" title="slice"></a>slice</h4><p>与 array 类似, 区别: 可增加长度. slice总是指向底层的一个array, slice是指向array的指针.</p>
+<ul>
+<li>slice 表示一个拥有相同类型元素的可变长度的序列。</li>
+<li>slice 看上去像没有长度的数组类型。</li>
+<li>slice有三个属性：指针，长度和容量。长度不能超过容量</li>
+<li>len()：返回slice的长度</li>
+<li>cap()：返回slice的容量</li>
+<li>slice是引用类型, 当一个slice赋值给另slice时, 两个变量会引用同一个array. </li>
+<li><p>语法定义: </p>
+<ul>
+<li>注意初始化 slice 的表达式与初始化数组的表达式的区别。 slice 初始化字面量看上去和数组字面量很像， 但是slice没有制定长度。<code>a = []int{1,2,3}</code></li>
+<li><code>sl := make([]int, 10)</code>, 创建一个初始化长度为10, 内部元素为int的slice.  </li>
+<li>可以从已有数组或slice生成新的slice, 如: <code>a[2:5]</code> , 从数组(或slice)中序号为2的,到序号为5的创建一个新的slice. 省略2, 5, 只用[:]表示(这是[0: len(a)]的简写形式), 用数组全部元素初始化一个slice.</li>
+</ul>
+</li>
+<li><p>必须使用<code>append</code>追加元素. append会返回一个新的slice. 即必须使用一个变量接收append函数的返回值。</p>
+</li>
+<li><code>length := copy(s1, s2)</code>用于对slice的复制. s1: 目标slice, s2: 复制源slice, length: 复制最终的长度. 长度 = s1或s2长度的最小值.</li>
+<li>slice比较不能使用 <code>==</code>， 字节数组可以使用 函数<code>bytes.Equal</code>比较， 其他类型slice需要自己写函数来进行比较。</li>
+<li>slice 并不是纯引用类型， 而是一种聚合类型。</li>
+<li></li>
+</ul>
+<h4 id="map"><a href="#map" class="headerlink" title="map"></a><code>map</code></h4><p>map可以被认为是一个字符串做索引的数组.</p>
+<ul>
+<li>定义: map[key type]<value type=""></value></li>
+<li>声明: make(map[key type]<value type="">)</value></li>
+<li><p>一句话声明+定义: </p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">args1 := <span class="keyword">map</span>[key <span class="keyword">type</span>]&lt;value <span class="keyword">type</span>&gt;&#123; key: value, key: value&#125; <span class="comment">// 字面量声明</span></span><br><span class="line">args2 := <span class="built_in">make</span>(<span class="keyword">map</span>[key <span class="keyword">type</span>]&lt;value <span class="keyword">type</span>&gt;) <span class="comment">// make()函数声明</span></span><br><span class="line">args3 := <span class="keyword">map</span>[key <span class="keyword">type</span>]&lt;value <span class="keyword">type</span>&gt;&#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>新增元素: map[key] = value</p>
+</li>
+<li>删除元素: delete(map, key)</li>
+<li><p>检测是否存在: value, present = map[key]</p>
+<blockquote>
+<p>使用 sort.Strings() 对字符串数组排序</p>
+</blockquote>
+</li>
+<li><p>map 的零值是nil，所以向零值的map赋值会错误，必须对map进行初始化</p>
+</li>
+<li>map 与 slice 一样，都不可比较(==)，需要自定义比较</li>
+</ul>
+<h4 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h4><p>结构体是将零个或者多个任意类型的命名变量组合在一起的聚合数据类型。每个变量都叫结构体的成员。</p>
+<ul>
+<li>结构体的比较：如果结构体中每个成员都可比较，则接口体也是可比较的。且是按照成员顺序比较。且和其他可比较类型一样，可比较的结构体都可以作为map的键类型。</li>
+</ul>
+<h4 id="JSON"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h4><ul>
+<li>成员标签定义是结构体成员在编译期间关联的一些元信息。</li>
+</ul>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>go不允许函数嵌套, 但是可以利用匿名函数实现. </p>
+<h4 id="Panic-Recover"><a href="#Panic-Recover" class="headerlink" title="Panic, Recover"></a>Panic, Recover</h4><p>go使用了 panic-and-recover 机制.</p>
+<blockquote>
+<p>一定要记得, 这应该作为最后的手段被使用.</p>
+</blockquote>
+<ul>
+<li><p>Panic</p>
+<p>  内建函数, 可以中断原有的控制流程. 进入Panic函数.</p>
+</li>
+<li><p>Recover</p>
+<p>  内建函数, 可以让进入Panic的流程中的gorountine恢复过来. </p>
+</li>
+</ul>
+<h2 id="包"><a href="#包" class="headerlink" title="包"></a>包</h2><p>包是函数和数据的集合. 用 package 关键字定义一个包. 文件名不需要与包名一致. 包名的约定是使用小写字符. </p>
+<ul>
+<li>公有函数的名字以大写字母开头;</li>
+<li>私有函数的名字以小写字母开头.</li>
+</ul>
+<p>这个规则同样适用于定义在包中的其他名字(新类型, 全局变量). </p>
+<h4 id="标示符"><a href="#标示符" class="headerlink" title="标示符"></a>标示符</h4><ul>
+<li><p>包名</p>
+<p>  当包导入(import)时, “包名”成为内容的入口.</p>
+<ul>
+<li><p>包名是导入的默认名称. 可以通过在导入语句指定其他名称来覆盖默认名称:</p>
+<p>  <code>import bar &quot;bytes&quot;</code></p>
+<p>  这意味着: 包名无需全局唯一. 在少有的冲突中, 可以给导入的包选择另一个名字在局部使用.</p>
+</li>
+<li><p>包名就是代码的根目录名: 在 <code>src/pkg/compress/gzip</code> 的包, 包名是gzip</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="包的文档"><a href="#包的文档" class="headerlink" title="包的文档"></a>包的文档</h4><p>每个包都应该有包注释, 在 package 前的一个注释块. 对于多文件包, 包注释只需要出现在一个文件前, 任意一个文件都可以.</p>
+<h4 id="测试包"><a href="#测试包" class="headerlink" title="测试包"></a>测试包</h4><p><code>go test</code> 程序调用了所有的测试函数. 编写测试需要包含 testing 包和程序 go test. </p>
+<p>测试文件名: *_test.go<br>测试函数名: TestXxxxx</p>
+<h4 id="常用的包"><a href="#常用的包" class="headerlink" title="常用的包"></a>常用的包</h4><ul>
+<li><p>fmt</p>
+<p>  包 fmt 实现了格式化的 I/O 函数, </p>
+</li>
+<li><p>io</p>
+<p>  io操作</p>
+</li>
+<li><p>bufio</p>
+<p>  缓冲IO, 封装于 io.Reader 和 io.Writer 对象</p>
+</li>
+<li><p>sort</p>
+<p>  sort 包提供了对数组和用户定义集合的原始排序功能.</p>
+</li>
+<li><p>strconv</p>
+<p>  strconv 包提供了将字符串转成基本数据类型, 或者从基本数据类型转为字符串的功能.</p>
+</li>
+<li><p>os</p>
+<p>  os 包提了与平台无关的操作系统功能接口</p>
+</li>
+<li><p>sync</p>
+<p>  sync 包提供了基本的同步原语. 如: 互斥锁.</p>
+</li>
+<li><p>flag</p>
+<p>  flag 包实现了命令行解析.</p>
+</li>
+<li><p>encoding/json</p>
+<p>  实现了编码与解码 RFC 4627定义的JSON对象</p>
+</li>
+<li><p>html/template</p>
+<p>  数据驱动的模板, 用于生成文本输出, 例如HTML</p>
+</li>
+<li><p>net/http</p>
+<p>  net/http 实现了http请求, 相应和URL的解析, 并且提供了可扩展的HTTP服务和基本的HTTP客户端.</p>
+</li>
+<li><p>unsafe</p>
+<p>  unsafe 包包含了 Go 程序中的数据类型上所有不安全操作.</p>
+</li>
+<li><p>reflect</p>
+<p>  reflect 包实现了运行时反射, 允许程序通过抽象类型操作对象. 通常用于处理静态类型 interface{} 的值. 并且通过 Typeof 解析出其动态类型信息, 通常会返回一个有接口类型的 Type 对象.</p>
+</li>
+<li><p>os/exec</p>
+<p>  os/exec 包执行外部命令.</p>
+</li>
+</ul>
+<h1 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h1><p>Go 有指针. 然而却没有指针运算, 因此他们更像是引用, 而不是你所知道来自于C的指针.</p>
+<p>指针的定义: 通过类型作为前缀来定义一个指针”<em>“, 如: var p </em>int. 现在 p 是一个指向整数值的指针. </p>
+<blockquote>
+<p>一个新定义的或者没有任何指向的指针, 值为 <code>nil</code></p>
+</blockquote>
+<ul>
+<li>指针指向: 让指针指向某些内容, 可以使用取址操作符 <code>&amp;</code>, 从指针获取值是<strong>通过在指针变量前置<code>*</code></strong>实现的 如:</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p *<span class="keyword">int</span></span><br><span class="line"><span class="keyword">var</span> i <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">p = &amp;i <span class="comment">// 指针 p 指向 i</span></span><br><span class="line">*p = <span class="number">8</span> <span class="comment">// 修改 i 的值</span></span><br></pre></td></tr></table></figure>
+<h2 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h2><p>Go 有两个内存分配原语: new 和 make. 他们应用于不同的类型. </p>
+<h4 id="new"><a href="#new" class="headerlink" title="new"></a>new</h4><p>new(T) 分配了零值填充的 T 类型的内存空间, 并且返回其地址, 一个 *T 类型的值. 用 Go 的属于说, 它返回了一个指针, 指向新分配的类型 T 的零值.</p>
+<h4 id="make"><a href="#make" class="headerlink" title="make"></a>make</h4><p>make 只能创建 slice, map 和 channel, 并且返回一个有初始值(非零)的T类型, 而不是 *T, </p>
+<blockquote>
+<p>make 仅适用于 map, slice 和 channel, 并且返回的不是指针. 应当用 new 获得特定的指针.</p>
+</blockquote>
+<ul>
+<li>new(T) 返回 *T 指向一个零值T</li>
+<li>make(T) 返回初始化后的T, 且make仅适用于slice, map 和 channel</li>
+</ul>
+<h4 id="构造函数与复合声明"><a href="#构造函数与复合声明" class="headerlink" title="构造函数与复合声明"></a>构造函数与复合声明</h4><p>有时零值不能满足需求, 必须要有一个用于初始化的构造函数.</p>
+<blockquote>
+<p>new(File) 和 &amp;File{} 是等价的.<br>从复合声明中获取地址, 意味着告诉编译器在堆中分配空间 而不是栈中.</p>
+</blockquote>
+<p>在特定的环境下, 如果符合声明不包含任何字段, 它创建特定类型的零值. 即: new(File) 和 &amp;File{} 是等价的.</p>
+<ul>
+<li>复合声明</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ar := [...]<span class="keyword">string</span>&#123;&#125; <span class="comment">// 数组的复合声明</span></span><br><span class="line">sl := []<span class="keyword">string</span>&#123;&#125; <span class="comment">// slice的复合声明</span></span><br><span class="line">ma := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>&#123;&#125; <span class="comment">// map的复合声明</span></span><br></pre></td></tr></table></figure>
+<h4 id="定义自己的类型"><a href="#定义自己的类型" class="headerlink" title="定义自己的类型"></a>定义自己的类型</h4><ul>
+<li><p>结构字段</p>
+</li>
+<li><p>方法</p>
+<blockquote>
+<p>如果 x 可获取地址, 并且 &amp;x 的方法中包含了m, x.m() 是 (&amp;x).m() 更短的写法.</p>
+</blockquote>
+  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var n NameAge // 不是指针</span><br><span class="line">n.doSomething(2)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code>Go 会查找 NameAge 类型的变量 n 的方法列表, 没有找到就会再查找 *NamgeAge类型的方法列表, 并且将其转化为(&amp;n).doSomething(2).
+</code></pre><ul>
+<li>转换</li>
+</ul>
+<h2 id="接口-interface"><a href="#接口-interface" class="headerlink" title="接口, interface"></a>接口, interface</h2><ul>
+<li>在函数中, 可以使用 type switch 获取变量实际的类型, 在 switch 之外使用(type)是非法的.</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">(p I)</span></span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> t := p.(<span class="keyword">type</span>) &#123;</span><br><span class="line">        <span class="keyword">case</span> *S:</span><br><span class="line">        <span class="keyword">case</span> *R:</span><br><span class="line">        <span class="keyword">case</span> S:</span><br><span class="line">        <span class="keyword">case</span> R:</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 switch 之外使用 (type) 是非法的, 类型判断不是唯一的运行时得到类型的方法. 为了在运行时得到类型, 同样可以使用 “comma, ok” 来判断一个接口类型是否实现了某个特定接口。</p>
+<ul>
+<li>空接口： interface{}，我们可以创建一个接受空接口作为参数的普通函数</li>
+</ul>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>方法就是接收者的函数。可以在任意类型上定义方法(除了非本地类型， 包括内建类型：int类型不能you方法)。</p>
+<h4 id="接口类型的方法"><a href="#接口类型的方法" class="headerlink" title="接口类型的方法"></a>接口类型的方法</h4><p>接口定义为一个方法的集合。 方法包含实际的代码。 </p>
+<h4 id="接口名字"><a href="#接口名字" class="headerlink" title="接口名字"></a>接口名字</h4><p>单腌法接口命名： 方法名加上 <code>-er</code> 后缀</p>
+<h4 id="自省和反射"><a href="#自省和反射" class="headerlink" title="自省和反射"></a>自省和反射</h4><h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><h4 id="接口值"><a href="#接口值" class="headerlink" title="接口值"></a>接口值</h4><p>一个接口类型的值(简称接口值)其实有两部分：</p>
+<ul>
+<li>一个具体类型</li>
+<li>该类型的一个值</li>
+</ul>
+<p>两者称为接口的动态类型和动态值。</p>
+<p><code>var buf *bytes.Buffer</code></p>
+<table>
+<thead>
+<tr>
+<th>动态类型</th>
+<th>*bytes.Buffer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>动态值</td>
+<td>nil</td>
+</tr>
+</tbody>
+</table>
+<h4 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h4><p><code>(param ...Type)</code> 参数 <code>param</code> 是一个可变参数, 调用方可以传入任意多个值, 使用时 <code>param</code> 可以当做 <code>[]slice</code> 来使用.</p>
+</div><div class="tags"></div><div class="post-nav"><a class="pre" href="/20181021/CoreOS本地安装/">CoreOS本地VM安装</a><a class="next" href="/20180721/蓝鲸CMDB部署个人整理/">蓝鲸CMDB部署个人整理</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://www.fuxiao.im"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/hexo/" style="font-size: 15px;">hexo</a> <a href="/tags/https/" style="font-size: 15px;">https</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/K8S/" style="font-size: 15px;">K8S</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/20181228/Ubuntu-K8S-1-13-kubeadm搭建集群/">Ubuntu_K8S_1.13_kubeadm搭建集群</a></li><li class="post-list-item"><a class="post-list-link" href="/20181021/CoreOS本地安装/">CoreOS本地VM安装</a></li><li class="post-list-item"><a class="post-list-link" href="/20180815/Golang学习笔记/">Golang学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/20180721/蓝鲸CMDB部署个人整理/">蓝鲸CMDB部署个人整理</a></li><li class="post-list-item"><a class="post-list-link" href="/20180610/ElasticSearch学习笔记/">ElasticSearch学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/20170723/new-web/">备案, 重新搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/20170221/Java8实战读书笔记/">Java8实战读书笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/20170101/Docker学习/">Docker学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/20170101/https/">2017年的第一天, 给自己的网站加个"S"</a></li><li class="post-list-item"><a class="post-list-link" href="/20161018/java8-time/">Better Java (1)- JDK8中有关时间的操作</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">付啸的个人网站.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.2/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
